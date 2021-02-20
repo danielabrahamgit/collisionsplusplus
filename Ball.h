@@ -8,18 +8,20 @@ class Ball {
     double red, green, blue;
     //x, y positions
     double x, y;
+    //Previous x, y positions
+    double x_p, y_p;
     //x y velocities
     double vx, vy;
 
     //Constructor
-    Ball(double, double, double);
+    Ball(double, double, double, double);
     Ball();
     //Draws the ball
     void draw();
     //Update the ball's position
     void update();
     //Set the ball's mass and radius
-    void set_mass_rad(double double);
+    void set_mass_rad(double, double);
     //Set the ball's pos
     void set_pos(double, double);
     void set_rand_pos();

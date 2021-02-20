@@ -2,10 +2,10 @@
 #include <iostream>
 #include "physics.h"
 
-#define WIDTH 800
-#define HEIGHT 800
-#define FPS 60
-#define NUM_BALLS 2
+#define WIDTH 1000
+#define HEIGHT 1000
+#define FPS 120
+#define NUM_BALLS 100
 
 physics* phys_handler;
 
@@ -25,6 +25,7 @@ void Timer(int value) {
 int main(int argc, char** argv)
 {
     phys_handler = new physics(NUM_BALLS);
+   
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(WIDTH, HEIGHT);

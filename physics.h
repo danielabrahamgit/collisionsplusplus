@@ -8,4 +8,5 @@ class physics {
     physics();
     physics(unsigned);
     void next_frame();
+    void collide(Ball*, Ball*);
 };

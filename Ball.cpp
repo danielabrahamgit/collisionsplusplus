@@ -4,12 +4,11 @@
 #include <cmath>
 #include "Ball.h"
 
-
 #define NUM_SEG 300
 
 Ball::Ball() {
     set_pos(0, 0);
-    set_mass_rad(100, 1);
+    set_mass_rad(0.1, 1);
     set_color(1.0, 1.0, 1.0);
     set_speed(0, 0);
 }
@@ -26,15 +25,14 @@ void Ball::set_mass_rad(double r_in, double m_in) {
     m = m_in;
 }
 
-void Ball::set_pos(double x_in, double y_in, double r_in) {
-    x = x_in;
-    y = y_in;
-    r = r_in;
+void Ball::set_pos(double x_in, double y_in) {
+    x = x_p = x_in;
+    y = y_p = y_in;
 }
 
 void Ball::set_rand_pos() {
-    x = (1 - (rand() * 2.0 / RAND_MAX));
-    y = (1 - (rand() * 2.0 / RAND_MAX));
+    x = x_p = (1 - (rand() * 2.0 / RAND_MAX));
+    y = y_p = (1 - (rand() * 2.0 / RAND_MAX));
 }
 
 void Ball::set_color(double red_in, double green_in, double blue_in) {
@@ -60,6 +58,10 @@ void Ball::set_rand_speed() {
 }
 
 void Ball::update() {
+    //Remember the old positions
+    x_p = x;
+    y_p = y;
+
     //Update positions 
     x += vx;
     y += vy;

@@ -14,22 +14,22 @@ physics::physics(unsigned num_balls_in){
     srand(time(NULL));
     num_balls = num_balls_in;
     balls = new Ball[num_balls];
-    balls[0].set_rand_color();
-    balls[0].set_rand_speed();
-    balls[0].set_pos(-0.5, 0.5, 0.1);
-
-
-    balls[1].set_rand_color();
-    balls[1].set_rand_speed();
-    balls[1].set_pos(0.5, -0.5, 0.1);
-    //iterate through all the balls
-    /*
+    double x = -1;
+    double y = 0.8;
+    double w = 0.01;
     for (int i = 0; i < num_balls; i++) {
-      balls[i].set_rand_color();
-      balls[i].set_rand_speed();
-      balls[i].set_pos(-0.5 + i * 1/2, 0.5, 0.1);
+        balls[i].set_mass_rad(.009, 1);
+        balls[i].set_rand_color();
+        //balls[i].set_rand_speed();
+        balls[i].set_speed(0, 0);
+        if (x < 1 - 2 * (balls[i].r + w))
+            x += 2 * (balls[i].r + w);
+        else {
+            x = -1 + 2 * (balls[i].r + w);
+            y -= 2 * (balls[i].r + w);
+        }
+        balls[i].set_pos(x, y);
     }
-    */
 }
 
 void physics::next_frame() {
@@ -41,7 +41,7 @@ void physics::next_frame() {
             double dist = pow(balls[i].x - balls[j].x, 2) 
                         + pow(balls[i].y - balls[j].y, 2);
             if (dist < pow(balls[i].r + balls[j].r, 2)) {
-                cout << "Collision Detected" << endl;
+                collide(&balls[i], &balls[j]);
             }
         }
     }
@@ -56,13 +56,43 @@ void physics::collide(Ball* a, Ball* b) {
     double norm = sqrt(pow(cx, 2) + pow(cy, 2));
     cx = cx / norm;
     cy = cy / norm;
-    //c is a unit vector
-    double nx = -cy;
-    double ny = cx;
-    //New a vector:
-    double ax = (cx * a->x) + (cy * a->y);
-    double ay = (-cy * a->x) + (cx * a->y);
+
+    //New a positions
+    double ax_p = (cx * a->x_p) + (cy * a->y_p);
+    double ay_p = (-cy * a->x_p) + (cx * a->y_p);
+    //New b poistions
+    double bx_p = (cx * b->x_p) + (cy * b->y_p);
+    double by_p = (-cy * b->x_p) + (cx * b->y_p);
+
+    //New a velocity:
+    double avx = (cx * a->vx) + (cy * a->vy);
+    double avy = (-cy * a->vx) + (cx * a->vy);
     //New b vector:
-    double bx = (cx * b->x) + (cy * b->y);
-    double ay = (-cy * b->x) + (cx * b->y);
+    double bvx = (cx * b->vx) + (cy * b->vy);
+    double bvy = (-cy * b->vx) + (cx * b->vy);
+
+    //Compute new velocities in new coordinate system
+    double avx_final_c = (((a->m - b->m) * avx) + (2.0 * b->m * bvx)) / (b->m + a->m);
+    double bvx_final_c = ((2 * a->m * avx) - ((a->m - b->m) * bvx)) / (b->m + a->m);
+
+    //Calculate tc (collision time)
+    double tc = (abs(bx_p - ax_p) - (a->r + b->r)) / abs(avx - bvx);
+    //Find final positions
+    double ax_final_c = ax_p + (tc * avx) + (1 - tc) * avx_final_c;
+    double bx_final_c = bx_p + (tc * bvx) + (1 - tc) * bvx_final_c;
+
+    double temp_ax = ax_p + (tc * avx);
+    double temp_bx = bx_p + (tc * bvx);
+
+    //Rotate back to original frame of reference
+    //Velocity
+    a->vx = (cx * avx_final_c) - (cy * avy);
+    a->vy = (cy * avx_final_c) + (cx * avy);
+    b->vx = (cx * bvx_final_c) - (cy * bvy);
+    b->vy = (cy * bvx_final_c) + (cx * bvy);
+    //Position
+    a->x = (cx * ax_final_c) - (cy * ay_p);
+    a->y = (cy * ax_final_c) + (cx * ay_p);
+    b->x = (cx * bx_final_c) - (cy * by_p);
+    b->y = (cy * bx_final_c) + (cx * by_p);
 }
