@@ -12,6 +12,10 @@ class Ball {
     double x_p, y_p;
     //x y velocities
     double vx, vy;
+    //accerleration
+    double ax, ay;
+    //coefficient of restitution
+    double rest;
 
     //Constructor
     Ball(double, double, double, double);
@@ -30,5 +34,11 @@ class Ball {
     void set_rand_color();
     //set the ball's speed
     void set_speed(double, double);
-    void set_rand_speed();
+    void set_rand_speed(double);
+    //Set the ball's acceleration
+    void set_acc(double, double);
+    //Set the ball's restitution
+    void set_rest(double=1.0);
+    //Collision between two balls
+    static void collide(Ball*, Ball*);
 };

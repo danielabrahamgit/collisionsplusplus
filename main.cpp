@@ -5,8 +5,8 @@
 
 #define WIDTH 1000
 #define HEIGHT 1000
-#define FPS 10
-#define NUM_BALLS 2
+#define FPS 60
+#define NUM_BALLS 3
 
 using namespace std;
 
@@ -19,13 +19,18 @@ void display(void)
 
 void Timer(int value) {
     glutPostRedisplay();
-    glutTimerFunc(1000 / FPS, Timer, 0);
+    glutTimerFunc(0 * 1000 / FPS, Timer, 0);
 }
 
 
 int main(int argc, char** argv)
-{
-    phys_handler = new physics(NUM_BALLS, 0.2);
+{   
+    double vel_scaling = 0;
+    double radius = 0.2;
+    double mass = 10;
+    phys_handler = new physics(NUM_BALLS);
+    phys_handler->random_init(vel_scaling, radius, mass);
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(WIDTH, HEIGHT);
