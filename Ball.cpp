@@ -1,29 +1,52 @@
 #define _USE_MATH_DEFINES
 
 #include <GL/glut.h>
-#include <iostream>
 #include <cmath>
-#include <ctime>
 #include "Ball.h"
+
 
 #define NUM_SEG 300
 
-using namespace std;
-
 Ball::Ball() {
-    x = x_p = 0;
-    y = y_p = 0;
-    r = 100;
-    vx = 0;
-    vy = 0;
+    set_pos(0, 0);
+    set_mass_rad(100, 1);
+    set_color(1.0, 1.0, 1.0);
     set_speed(0, 0);
 }
 
-Ball::Ball(double x_in, double y_in, double r_in) {
-    x = x_p = x_in;
-    y = y_p = y_in;
-    r = r_in;
+Ball::Ball(double x_in, double y_in, double r_in, double m_in) {
+    set_pos(x_in, y_in);
+    set_mass_rad(r_in, m_in);
+    set_color(1.0, 1.0, 1.0);
     set_speed(0, 0);
+}
+
+void Ball::set_mass_rad(double r_in, double m_in) {
+    r = r_in;
+    m = m_in;
+}
+
+void Ball::set_pos(double x_in, double y_in, double r_in) {
+    x = x_in;
+    y = y_in;
+    r = r_in;
+}
+
+void Ball::set_rand_pos() {
+    x = (1 - (rand() * 2.0 / RAND_MAX));
+    y = (1 - (rand() * 2.0 / RAND_MAX));
+}
+
+void Ball::set_color(double red_in, double green_in, double blue_in) {
+    red = red_in;
+    blue = blue_in;
+    green = green_in;
+}
+
+void Ball::set_rand_color() {
+    red   = rand() * 1.0 / RAND_MAX;
+    blue  = rand() * 1.0 / RAND_MAX;
+    green = rand() * 1.0 / RAND_MAX;
 }
 
 void Ball::set_speed(double vx_in, double vy_in) {
@@ -32,11 +55,8 @@ void Ball::set_speed(double vx_in, double vy_in) {
 }
 
 void Ball::set_rand_speed() {
-    srand(time(NULL));
-    vx = (rand() * 1.0 / RAND_MAX) / 40.0;
-    cout << vx << endl;
-    vy = (rand() * 1.0/  RAND_MAX) / 40.0;
-    cout << vy << endl;
+    vx = (1 - (rand() * 2.0 / RAND_MAX)) / 40.0;
+    vy = (1 - (rand() * 2.0 / RAND_MAX)) / 40.0;
 }
 
 void Ball::update() {
@@ -64,6 +84,7 @@ void Ball::update() {
 
 void Ball::draw() {
     glBegin(GL_POLYGON);
+    glColor3f(red, green, blue);
     for (int i = 0; i <= NUM_SEG; i++)
     {
         double angle = 2 * M_PI * i / 300;
