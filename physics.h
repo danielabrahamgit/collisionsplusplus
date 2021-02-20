@@ -6,7 +6,8 @@ class physics {
     unsigned num_balls;
 
     physics();
-    physics(unsigned);
+    physics(unsigned, double);
     void next_frame();
     void collide(Ball*, Ball*);
+    double compute_energy();
 };

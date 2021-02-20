@@ -3,31 +3,35 @@
 #include <ctime>
 #include <cmath>
 #include <iostream>
+#include "PoissonGenerator.h"
 
 using namespace std;
 
 physics::physics() {
-    physics(10);
+    physics(10, 0.05);
 }
 
-physics::physics(unsigned num_balls_in){
+physics::physics(unsigned num_balls_in, double radius){
+    PoissonGenerator::DefaultPRNG PRNG;
     srand(time(NULL));
+    const auto Points = PoissonGenerator::
+                        generatePoissonPoints(
+                            num_balls_in, 
+                            PRNG, 
+                            false, 
+                            30, 
+                            2 * radius);
     num_balls = num_balls_in;
     balls = new Ball[num_balls];
-    double x = -1;
-    double y = 0.8;
-    double w = 0.05;
-    for (int i = 0; i < num_balls; i++) {
-        balls[i].set_mass_rad(w, 100);
+    int i = -1;
+    auto rnd_point = Points.begin();
+    while (++i < num_balls) {
+        balls[i].set_mass_rad(radius, 100);
         balls[i].set_rand_color();
         balls[i].set_rand_speed();
-        if (x < 1 - 2 * (balls[i].r + w))
-            x += 2 * (balls[i].r + w);
-        else {
-            x = -1 + 2 * (balls[i].r + w);
-            y -= 2 * (balls[i].r + w);
-        }
-        balls[i].set_pos(x, y);
+        balls[i].set_pos((1 - radius) * (1 - 2 * rnd_point->x), 
+                         (1 - radius) * (1 - 2 * rnd_point->y));
+        rnd_point++;
     }
 }
 

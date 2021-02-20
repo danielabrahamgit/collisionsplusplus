@@ -1,15 +1,16 @@
 #include <GL/glut.h>
 #include <iostream>
+#include <vector>
 #include "physics.h"
 
 #define WIDTH 1000
 #define HEIGHT 1000
-#define FPS 60
-#define NUM_BALLS 30
-
-physics* phys_handler;
+#define FPS 10
+#define NUM_BALLS 2
 
 using namespace std;
+
+physics* phys_handler;
 
 void display(void)
 {
@@ -24,7 +25,7 @@ void Timer(int value) {
 
 int main(int argc, char** argv)
 {
-    phys_handler = new physics(NUM_BALLS);
+    phys_handler = new physics(NUM_BALLS, 0.2);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(WIDTH, HEIGHT);
@@ -35,3 +36,5 @@ int main(int argc, char** argv)
     glutMainLoop();
     return 0;
 }
+
+
