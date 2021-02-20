@@ -4,8 +4,8 @@
 
 #define WIDTH 1000
 #define HEIGHT 1000
-#define FPS 120
-#define NUM_BALLS 100
+#define FPS 60
+#define NUM_BALLS 30
 
 physics* phys_handler;
 
@@ -25,7 +25,6 @@ void Timer(int value) {
 int main(int argc, char** argv)
 {
     phys_handler = new physics(NUM_BALLS);
-   
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(WIDTH, HEIGHT);

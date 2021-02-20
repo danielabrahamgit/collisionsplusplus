@@ -16,12 +16,11 @@ physics::physics(unsigned num_balls_in){
     balls = new Ball[num_balls];
     double x = -1;
     double y = 0.8;
-    double w = 0.01;
+    double w = 0.05;
     for (int i = 0; i < num_balls; i++) {
-        balls[i].set_mass_rad(.009, 1);
+        balls[i].set_mass_rad(w, 100);
         balls[i].set_rand_color();
-        //balls[i].set_rand_speed();
-        balls[i].set_speed(0, 0);
+        balls[i].set_rand_speed();
         if (x < 1 - 2 * (balls[i].r + w))
             x += 2 * (balls[i].r + w);
         else {
@@ -95,4 +94,12 @@ void physics::collide(Ball* a, Ball* b) {
     a->y = (cy * ax_final_c) + (cx * ay_p);
     b->x = (cx * bx_final_c) - (cy * by_p);
     b->y = (cy * bx_final_c) + (cx * by_p);
+}
+
+double physics::compute_energy() {
+    double total_energy = 0;
+    for (int i = 0; i < num_balls; i++) {
+        total_energy += 0.5 * balls[i].m * (pow(balls[i].vx, 2) + pow(balls[i].vy, 2));
+    }
+    return total_energy;
 }
