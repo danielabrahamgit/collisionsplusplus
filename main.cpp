@@ -6,7 +6,7 @@
 #define WIDTH 1000
 #define HEIGHT 1000
 #define FPS 60
-#define NUM_BALLS 3
+#define NUM_BALLS 30
 
 using namespace std;
 
@@ -26,7 +26,7 @@ void Timer(int value) {
 int main(int argc, char** argv)
 {   
     double vel_scaling = 0;
-    double radius = 0.2;
+    double radius = 0.05;
     double mass = 10;
     phys_handler = new physics(NUM_BALLS);
     phys_handler->random_init(vel_scaling, radius, mass);
