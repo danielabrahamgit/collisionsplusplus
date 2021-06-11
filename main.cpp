@@ -5,8 +5,8 @@
 
 #define WIDTH 1000
 #define HEIGHT 1000
-#define FPS 60
-#define NUM_BALLS 30
+#define FPS 120
+#define NUM_BALLS 50
 
 using namespace std;
 
@@ -26,16 +26,14 @@ void Timer(int value) {
 int main(int argc, char** argv)
 {   
     double vel_scaling = 0;
-    double radius = 0.05;
-    double mass = 10;
-    phys_handler = new physics(NUM_BALLS);
-    phys_handler->random_init(vel_scaling, radius, mass);
+    phys_handler = new physics(NUM_BALLS, WIDTH, HEIGHT);
+    phys_handler->random_init(vel_scaling);
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("Let us hope his works");
+    glutCreateWindow("Collision Simulator");
     glutDisplayFunc(display);
     glutTimerFunc(0, Timer, 0);
     glutMainLoop();

@@ -7,16 +7,21 @@
 
 using namespace std;
 
-physics::physics() {
-    physics(10);
-}
-
-physics::physics(unsigned num_balls_in){
+physics::physics(unsigned num_balls_in, unsigned width_in, unsigned height_in) {
+    /* Initialize class variables */
     num_balls = num_balls_in;
     balls = new Ball[num_balls];
+    width = width_in;
+    height = height_in;
 }
 
-void physics::random_init(double v_scale, double radius, double mass) {
+void physics::random_init(double v_scale) {
+    //Generate radius and mass
+    double radius = sqrt(width * height / num_balls) / 4 / width;
+    cout << radius << endl;
+    double mass = radius * 200.0;
+
+    //Poisson Disk distribution of balls
     PoissonGenerator::DefaultPRNG PRNG;
     srand(time(NULL));
     const auto Points = PoissonGenerator::
@@ -29,7 +34,7 @@ void physics::random_init(double v_scale, double radius, double mass) {
     int i = -1;
     auto rnd_point = Points.begin();
     while (++i < num_balls) {
-        balls[i].set_acc(0, -.00001);
+        balls[i].set_acc(0, -.000003);
         balls[i].set_mass_rad(radius, mass);
         balls[i].set_rand_color();
         balls[i].set_rand_speed(v_scale);
