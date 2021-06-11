@@ -9,6 +9,6 @@ class physics {
 
     physics(unsigned, unsigned, unsigned);
     void random_init(double);
-    void next_frame();
+    void next_frame(bool);
     double compute_energy();
 };

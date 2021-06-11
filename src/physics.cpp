@@ -44,10 +44,12 @@ void physics::random_init(double v_scale) {
     }
 }
 
-void physics::next_frame() {
-    glClear(GL_COLOR_BUFFER_BIT);
+void physics::next_frame(bool draw) {
+    if (draw)
+        glClear(GL_COLOR_BUFFER_BIT);
     for (int i = 0; i < num_balls; i++) {
-        balls[i].draw();
+        if (draw)
+            balls[i].draw();
         balls[i].update();
         for (int j = i + 1; j < num_balls; j++) {
             double dist = pow(balls[i].x - balls[j].x, 2) 
@@ -57,7 +59,8 @@ void physics::next_frame() {
             }
         }
     }
-    glutSwapBuffers();
+    if (draw)
+        glutSwapBuffers();
 }
 
 double physics::compute_energy() {
