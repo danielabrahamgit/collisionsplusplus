@@ -34,7 +34,7 @@ void physics::random_init(double v_scale) {
     int i = -1;
     auto rnd_point = Points.begin();
     while (++i < num_balls) {
-        balls[i].set_acc(0, -.000003);
+        balls[i].set_acc(0, -0.000003);
         balls[i].set_mass_rad(radius, mass);
         balls[i].set_rand_color();
         balls[i].set_rand_speed(v_scale);

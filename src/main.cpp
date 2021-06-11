@@ -11,15 +11,20 @@
 using namespace std;
 
 physics* phys_handler;
+int num_frames = -1;
+int frame_count = 0;
 
-void display(void)
-{
+void display(void) {
   phys_handler->next_frame();
 }
 
+void display_rendered(void) {
+  printf("Yo\n");
+}
+
 void Timer(int value) {
-    glutPostRedisplay();
-    glutTimerFunc(0 * 1000 / FPS, Timer, 0);
+  glutPostRedisplay();
+  glutTimerFunc(0 * 1000 / FPS, Timer, 0);
 }
 
 
@@ -34,7 +39,14 @@ int main(int argc, char** argv)
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0, 0);
     glutCreateWindow("Collision Simulator");
-    glutDisplayFunc(display);
+    //Needs rendering, grab number of seconds
+    if (argc == 2) {
+        printf("Rendering ...\n");
+        num_frames = FPS * atoi(argv[1]);
+        glutDisplayFunc(display_rendered);
+    } else {
+        glutDisplayFunc(display);
+    }
     glutTimerFunc(0, Timer, 0);
     glutMainLoop();
     return 0;
