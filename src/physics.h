@@ -1,8 +1,9 @@
 #include "Ball.h"
+#include <vector>
 
 class physics {
     public:
-    Ball* balls;
+    std::vector<Ball*> balls;
     unsigned num_balls;
     unsigned width;
     unsigned height;

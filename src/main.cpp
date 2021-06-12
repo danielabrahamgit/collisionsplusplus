@@ -12,19 +12,21 @@ using namespace std;
 
 //Global Physics engine
 physics* phys_handler;
+
 //Used for rendering
 int num_frames = -1;
 int frame_count = 0;
 typedef struct list_of_rendered_balls {
     Ball balls[NUM_BALLS];
 } ball_list_t;
-
 ball_list_t* rendered_balls;
 
+//Regular display function
 void display(void) {
     phys_handler->next_frame(true);
 }
 
+//Display function for rendered scenes
 void display_rendered(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     if (frame_count == num_frames)
@@ -36,40 +38,53 @@ void display_rendered(void) {
     glutSwapBuffers();
 }
 
+//Glut timer function
 void Timer(int value) {
     glutPostRedisplay();
     glutTimerFunc(1000 / FPS, Timer, 0);
 }
 
+//Rendering function, this one takes a while
+void render_scene() {
+    cout << "Rendering ... " << endl; 
+    rendered_balls = (ball_list_t*) malloc(sizeof(ball_list_t) * num_frames);
+    for (int f = 0; f < num_frames; f++) {
+        for (int i = 0; i < NUM_BALLS; i++) {
+            rendered_balls[f].balls[i] = *(phys_handler->balls.at(i));
+        }
+        phys_handler->next_frame(false);
+    }
+    cout << "Rendering Completed. Starting Simulation" << endl;
+}
+
 
 int main(int argc, char** argv)
 {   
-    double vel_scaling = 0;
+    //Initialize physics engine
+    double vel_scaling = 0.1;
     phys_handler = new physics(NUM_BALLS, WIDTH, HEIGHT);
     phys_handler->random_init(vel_scaling);
 
+    //Initialize the window
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0, 0);
-    //Needs rendering, grab number of seconds
+
+    //Render
     if (argc == 2) {
-        cout << "Rendering ... " << endl; 
         num_frames = FPS * atoi(argv[1]);
-        rendered_balls = (ball_list_t*) malloc(sizeof(ball_list_t) * num_frames);
-        for (int f = 0; f < num_frames; f++) {
-            for (int i = 0; i < NUM_BALLS; i++) {
-                rendered_balls[f].balls[i] = phys_handler->balls[i];
-            }
-            phys_handler->next_frame(false);
-        }
-        cout << "Rendering completed. Starting Simulation" << endl;
+        render_scene();
         glutCreateWindow("Collision Simulator: Rendered");
         glutDisplayFunc(display_rendered);
-    } else {
+    } 
+    //Dont render
+    else {
         glutCreateWindow("Collision Simulator");
         glutDisplayFunc(display);
     }
+
+    //Specify how often to draw
     glutTimerFunc(0, Timer, 0);
     glutMainLoop();
     free(rendered_balls);

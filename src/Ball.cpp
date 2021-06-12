@@ -3,6 +3,8 @@
 #include <GL/glut.h>
 #include <cmath>
 #include "Ball.h"
+#include <vector>
+#include <algorithm>
 
 #define NUM_SEG 300
 
