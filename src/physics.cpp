@@ -76,6 +76,19 @@ void physics::structured_init(double v_scale, double gravity, double radius) {
             }
         }
     }
+
+    //Primer balls
+    double p_radius = 3 * radius;
+    double p_mass = 3 * mass;
+    for (int i = 0; i < 4; i++) {
+        int val1 = 1 - 2 * (i & 1);
+        int val2 = 1 - 2 * ((i >> 1) & 1);
+        Ball* primer_ball = new Ball(val1 * (1 - p_radius), val2 * (1 - p_radius), p_radius, p_mass);
+        primer_ball->set_color(1, 0, 0);
+        primer_ball->set_speed(val1 * 0.01, val2 * 0.01);
+        balls.push_back(primer_ball);
+        ball_count++;
+    }
     num_balls = ball_count;
 }
 
@@ -103,13 +116,12 @@ void physics::random_init(double v_scale, double gravity) {
             radius,
             mass);
         new_ball->set_rand_color();
-        new_ball->set_rand_speed(0 * v_scale);
+        new_ball->set_rand_speed(v_scale);
         new_ball->set_acc(0, gravity);
         balls.push_back(new_ball);
         rnd_point++;
     }
 }
-
 
 void physics::next_frame(bool draw) {
     if (draw)
@@ -123,13 +135,14 @@ void physics::next_frame(bool draw) {
 
     //Sort Balls by x position
     vector<Ball*> active_list;
-    sort(balls.begin(), balls.end(), [](const Ball* f, const Ball* s) { return f->x < s->x; });
+    sort(balls.begin(), balls.end(), [](const Ball* f, const Ball* s) { return f->x - f->r < s->x - s->r; });
 
     for (auto it = balls.begin(); it != balls.end(); it++) {
         auto act_it = active_list.begin();
+        //active_list.insert(active_list.end(), *it);
         while (act_it != active_list.end()) {
             if (abs((*it)->x - (*act_it)->x) < (*it)->r + (*act_it)->r) {
-                double dist = pow((*it)->x -(*act_it)->x, 2) 
+                double dist = pow((*it)->x - (*act_it)->x, 2) 
                             + pow((*it)->y - (*act_it)->y, 2);
                 if (dist < pow((*it)->r + (*act_it)->r, 2)) {
                     Ball::collide((*it), (*act_it));
@@ -139,8 +152,22 @@ void physics::next_frame(bool draw) {
                 act_it = active_list.erase(act_it);
             }
         }
-        active_list.insert(active_list.end(), *it);
+        active_list.push_back(*it);
     }
+
+    // Dumb but working solution
+    // for (int i = 0; i < num_balls; i++) {
+    //     for (int j = 0; j < i; j++) {
+    //         Ball* ball1 = balls.at(i);
+    //         Ball* ball2 = balls.at(j);
+    //         double dist = pow(ball1->x - ball2->x, 2) 
+    //                     + pow(ball1->y - ball2->y, 2);
+    //         if (dist < pow(ball1->r + ball2->r, 2)) {
+    //             cout << "Actual Hit" << endl;
+    //             Ball::collide(ball1, ball2);
+    //         }
+    //     }
+    // }
     if (draw)
         glutSwapBuffers();
 }

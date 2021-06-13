@@ -81,11 +81,11 @@ void render_scene(bool reversed) {
 int main(int argc, char** argv)
 {   
     //Setup stuff
-    double vel_scaling = 0.001;
-    double gravity = -0.0001;
-    double radius = 0.008;
+    double vel_scaling = 0;
+    double gravity = 0;
+    double radius = 0.007;
     //Only used for random_init
-    NUM_BALLS = 100;
+    NUM_BALLS = 15;
 
     phys_handler = new physics(NUM_BALLS, WIDTH, HEIGHT);
     phys_handler->structured_init(vel_scaling, gravity, radius);
