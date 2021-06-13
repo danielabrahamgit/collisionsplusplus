@@ -2,11 +2,15 @@
 #include <ctime>
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
+#include <assert.h>
+#include <string>
 #include "PoissonGenerator.h"
 #include "physics.h"
 
+#define WORD_FILE "word_to_balls/word_as_balls"
 
 using namespace std;
 
@@ -17,7 +21,65 @@ physics::physics(unsigned num_balls_in, unsigned width_in, unsigned height_in) {
     height = height_in;
 }
 
-void physics::random_init(double v_scale) {
+void physics::structured_init(double v_scale, double gravity, double radius) {
+    //Call python file to generate the location file that we need
+    string cmd = "python word_to_balls/main.py ";
+    cmd += to_string(width);
+    cmd += " ";
+    cmd += to_string(height);
+    cmd += " ";
+    cmd += "Raz Processing";
+    system(cmd.c_str());
+
+    //Initialize ball map which is about to get populated
+    uint8_t ball_map[height][width];
+
+    //Read the file
+    unsigned i = 0;
+    unsigned j = 0;
+    int next_int;
+    ifstream myfile(WORD_FILE);
+    if (myfile.is_open())
+    {
+        while (myfile >> next_int )
+        {
+            ball_map[i][j] = next_int;
+            j++;
+            if (j == width) {
+                i++;
+                j = 0;
+            }
+        }
+        myfile.close();
+    }
+    
+    //Generate radius and mass
+    double mass = radius * 200.0;
+
+    //Counts number of balls
+    unsigned ball_count = 0;
+    for (int r = 0; r < height; r++) {
+        for (int c = 0; c < width; c++) {
+            if (ball_map[r][c]) {
+                ball_count++;
+                Ball* new_ball = new Ball(
+                    (2.0 * c - width)  * 1.0 / width,
+                    (2.0 * r - height) * 1.0 / height,
+                    radius,
+                    mass
+                );
+                //new_ball->set_rand_color();
+                new_ball->set_color(1, 1, 1);
+                new_ball->set_rand_speed(v_scale);
+                new_ball->set_acc(0, gravity);
+                balls.push_back(new_ball);
+            }
+        }
+    }
+    num_balls = ball_count;
+}
+
+void physics::random_init(double v_scale, double gravity) {
     //Generate radius and mass
     double radius = sqrt(width * height / num_balls) / 4 / width;
     double mass = radius * 200.0;
@@ -42,7 +104,7 @@ void physics::random_init(double v_scale) {
             mass);
         new_ball->set_rand_color();
         new_ball->set_rand_speed(0 * v_scale);
-        new_ball->set_acc(0, -0.00005);
+        new_ball->set_acc(0, gravity);
         balls.push_back(new_ball);
         rnd_point++;
     }
@@ -79,18 +141,6 @@ void physics::next_frame(bool draw) {
         }
         active_list.insert(active_list.end(), *it);
     }
-
-    
-
-    // for (int i = 0; i < num_balls; i++) {
-    //     for (int j = 0; j < i; j++) {
-    //         double dist = pow(balls[i].x - balls[j].x, 2) 
-    //             + pow(balls[i].y - balls[j].y, 2);
-    //         if (dist < pow(balls[i].r + balls[j].r, 2)) {
-    //             Ball::collide(&balls[i], &balls[j]);
-    //         }
-    //     }
-    // }
     if (draw)
         glutSwapBuffers();
 }

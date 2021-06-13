@@ -6,20 +6,23 @@
 #define WIDTH 1000
 #define HEIGHT 1000
 #define FPS 120
-#define NUM_BALLS 1000
 
 using namespace std;
 
 //Global Physics engine
 physics* phys_handler;
+//To be intialized
+unsigned NUM_BALLS;
 
 //Used for rendering
 int num_frames = -1;
 int frame_count = 0;
+bool is_forward = true;
 typedef struct list_of_rendered_balls {
-    Ball balls[NUM_BALLS];
+    vector<Ball> balls;
 } ball_list_t;
 ball_list_t* rendered_balls;
+
 
 //Regular display function
 void display(void) {
@@ -29,13 +32,21 @@ void display(void) {
 //Display function for rendered scenes
 void display_rendered(void) {
     glClear(GL_COLOR_BUFFER_BIT);
-    if (frame_count == num_frames)
-        glutDestroyWindow(0);
-    ball_list_t blist = rendered_balls[frame_count++];
+    ball_list_t blist = rendered_balls[frame_count];
     for (int i = 0; i < NUM_BALLS; i++) {
-        blist.balls[i].draw();
+        blist.balls.at(i).draw();
     }
     glutSwapBuffers();
+    
+    frame_count += is_forward ? 1 : -1;
+
+    if (frame_count == num_frames) {
+        is_forward = false;
+        frame_count--;
+    } else if (frame_count == -1) {
+        is_forward = true;
+        frame_count++;
+    }
 }
 
 //Glut timer function
@@ -45,14 +56,23 @@ void Timer(int value) {
 }
 
 //Rendering function, this one takes a while
-void render_scene() {
+void render_scene(bool reversed) {
     cout << "Rendering ... " << endl; 
-    rendered_balls = (ball_list_t*) malloc(sizeof(ball_list_t) * num_frames);
-    for (int f = 0; f < num_frames; f++) {
-        for (int i = 0; i < NUM_BALLS; i++) {
-            rendered_balls[f].balls[i] = *(phys_handler->balls.at(i));
+    rendered_balls = new ball_list_t[num_frames];
+    if (reversed) {
+        for (int f = num_frames - 1; f >= 0; f--) {
+            for (int i = 0; i < NUM_BALLS; i++) {
+                rendered_balls[f].balls.push_back(*(phys_handler->balls.at(i)));
+            }
+            phys_handler->next_frame(false);
         }
-        phys_handler->next_frame(false);
+    } else {
+        for (int f = 0; f < num_frames; f++) {
+            for (int i = 0; i < NUM_BALLS; i++) {
+                rendered_balls[f].balls.push_back(*(phys_handler->balls.at(i)));
+            }
+            phys_handler->next_frame(false);
+        }
     }
     cout << "Rendering Completed. Starting Simulation" << endl;
 }
@@ -60,10 +80,17 @@ void render_scene() {
 
 int main(int argc, char** argv)
 {   
-    //Initialize physics engine
-    double vel_scaling = 0.1;
+    //Setup stuff
+    double vel_scaling = 0.001;
+    double gravity = -0.0001;
+    double radius = 0.008;
+    //Only used for random_init
+    NUM_BALLS = 100;
+
     phys_handler = new physics(NUM_BALLS, WIDTH, HEIGHT);
-    phys_handler->random_init(vel_scaling);
+    phys_handler->structured_init(vel_scaling, gravity, radius);
+    //phys_handler->random_init(vel_scaling, gravity);
+    NUM_BALLS = phys_handler->num_balls;
 
     //Initialize the window
     glutInit(&argc, argv);
@@ -74,7 +101,7 @@ int main(int argc, char** argv)
     //Render
     if (argc == 2) {
         num_frames = FPS * atoi(argv[1]);
-        render_scene();
+        render_scene(false);
         glutCreateWindow("Collision Simulator: Rendered");
         glutDisplayFunc(display_rendered);
     } 
@@ -87,7 +114,6 @@ int main(int argc, char** argv)
     //Specify how often to draw
     glutTimerFunc(0, Timer, 0);
     glutMainLoop();
-    free(rendered_balls);
     return 0;
 }
 
