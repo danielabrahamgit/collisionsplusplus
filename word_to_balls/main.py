@@ -13,7 +13,7 @@ for word in sys.argv[3:-1]:
     TEXT += word + '\n'
 TEXT += sys.argv[-1]
 
-SCALE  = 10
+SCALE  = 5
 HEIGHT = FULL_HEIGHT // SCALE
 WIDTH  = FULL_WIDTH // SCALE
 FPS    = 60
@@ -29,7 +29,7 @@ def on_draw(delta_time):
         WIDTH//2, 
         HEIGHT//2, 
         arcade.color.WHITE, 
-        18, 
+        10 * 18 // SCALE, 
         align="center",
         anchor_x="center", 
         anchor_y="center")
@@ -65,3 +65,6 @@ for r in range(SCALE * rows):
         ball_data.write(' ') 
     ball_data.write('\n')   
 ball_data.close()
+
+# plt.imshow(new_img, cmap='gray')
+# plt.show()

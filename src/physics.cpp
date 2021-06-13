@@ -78,8 +78,8 @@ void physics::structured_init(double v_scale, double gravity, double radius) {
     }
 
     //Primer balls
-    double p_radius = 3 * radius;
-    double p_mass = 3 * mass;
+    double p_radius = 5 * radius;
+    double p_mass = 5 * mass;
     for (int i = 0; i < 4; i++) {
         int val1 = 1 - 2 * (i & 1);
         int val2 = 1 - 2 * ((i >> 1) & 1);

@@ -83,7 +83,7 @@ int main(int argc, char** argv)
     //Setup stuff
     double vel_scaling = 0;
     double gravity = 0;
-    double radius = 0.007;
+    double radius = 0.002;
     //Only used for random_init
     NUM_BALLS = 15;
 
@@ -113,6 +113,7 @@ int main(int argc, char** argv)
 
     //Specify how often to draw
     glutTimerFunc(0, Timer, 0);
+    for (int i = 0; i < 1e9; i++);
     glutMainLoop();
     return 0;
 }
