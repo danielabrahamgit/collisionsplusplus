@@ -28,7 +28,7 @@ void physics::structured_init(double v_scale, double gravity, double radius) {
     cmd += " ";
     cmd += to_string(height);
     cmd += " ";
-    cmd += "Raz Processing";
+    cmd += "Physics";
     system(cmd.c_str());
 
     //Initialize ball map which is about to get populated

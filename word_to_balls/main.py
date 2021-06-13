@@ -12,6 +12,7 @@ TEXT   = ''
 for word in sys.argv[3:-1]:
     TEXT += word + '\n'
 TEXT += sys.argv[-1]
+print(TEXT)
 
 SCALE  = 5
 HEIGHT = FULL_HEIGHT // SCALE

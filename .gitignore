@@ -34,3 +34,6 @@ sim
 
 # VSCode
 .vscode
+
+# Temporary files for conversion
+temp/*
